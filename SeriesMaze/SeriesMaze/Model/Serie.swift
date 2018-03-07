@@ -11,17 +11,21 @@ import Foundation
 struct Serie: Decodable {
     let score: Float
     let show: Show
+    
+    struct Show: Decodable {
+        let id: Int
+        let name: String
+        let genres: [String]
+        let premiered: String
+        let image: Image?
+        let summary: String
+    }
+    
+    struct Image: Decodable {
+        let medium: String
+        let original: String
+    }
+    
 }
 
-struct Show: Decodable {
-    let name: String
-    let genres: [String]
-    let premiered: String
-    let image: Image?
-    let summary: String
-}
 
-struct Image: Decodable {
-    let medium: String
-    let original: String
-}

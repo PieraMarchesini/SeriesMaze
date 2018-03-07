@@ -15,6 +15,9 @@
 		65EF8B41204F121F002AF43E /* SeriesMazeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B40204F121F002AF43E /* SeriesMazeUITests.swift */; };
 		65EF8B53204F1A71002AF43E /* Serie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B52204F1A71002AF43E /* Serie.swift */; };
 		65EF8B58204F1C8A002AF43E /* SeriesTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B57204F1C8A002AF43E /* SeriesTableViewController.swift */; };
+		65EF8B5A2050372E002AF43E /* SeriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */; };
+		65EF8B5D2050540E002AF43E /* JSONReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B5C2050540E002AF43E /* JSONReader.swift */; };
+		65EF8B60205067AA002AF43E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B5F205067AA002AF43E /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,9 @@
 		65EF8B42204F121F002AF43E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65EF8B52204F1A71002AF43E /* Serie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Serie.swift; sourceTree = "<group>"; };
 		65EF8B57204F1C8A002AF43E /* SeriesTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTableViewController.swift; sourceTree = "<group>"; };
+		65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTableViewCell.swift; sourceTree = "<group>"; };
+		65EF8B5C2050540E002AF43E /* JSONReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONReader.swift; sourceTree = "<group>"; };
+		65EF8B5F205067AA002AF43E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,8 +107,10 @@
 			children = (
 				65EF8B4F204F1A32002AF43E /* Storyboard */,
 				65EF8B4E204F1A2B002AF43E /* Model */,
+				65EF8B5B205053FB002AF43E /* DataManager */,
 				65EF8B56204F1C5A002AF43E /* Controller */,
 				65EF8B20204F121F002AF43E /* AppDelegate.swift */,
+				65EF8B5E2050679D002AF43E /* Util */,
 				65EF8B27204F121F002AF43E /* Assets.xcassets */,
 				65EF8B2C204F121F002AF43E /* Info.plist */,
 			);
@@ -148,8 +156,25 @@
 			isa = PBXGroup;
 			children = (
 				65EF8B57204F1C8A002AF43E /* SeriesTableViewController.swift */,
+				65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		65EF8B5B205053FB002AF43E /* DataManager */ = {
+			isa = PBXGroup;
+			children = (
+				65EF8B5C2050540E002AF43E /* JSONReader.swift */,
+			);
+			path = DataManager;
+			sourceTree = "<group>";
+		};
+		65EF8B5E2050679D002AF43E /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				65EF8B5F205067AA002AF43E /* Extensions.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,7 +312,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				65EF8B58204F1C8A002AF43E /* SeriesTableViewController.swift in Sources */,
+				65EF8B60205067AA002AF43E /* Extensions.swift in Sources */,
+				65EF8B5D2050540E002AF43E /* JSONReader.swift in Sources */,
 				65EF8B21204F121F002AF43E /* AppDelegate.swift in Sources */,
+				65EF8B5A2050372E002AF43E /* SeriesTableViewCell.swift in Sources */,
 				65EF8B53204F1A71002AF43E /* Serie.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
