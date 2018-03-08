@@ -16,9 +16,9 @@ struct Serie: Decodable {
         let id: Int
         let name: String
         let genres: [String]
-        let premiered: String
+        let premiered: String?
         let image: Image?
-        let summary: String
+        let summary: String?
     }
     
     struct Image: Decodable {

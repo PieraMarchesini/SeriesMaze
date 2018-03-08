@@ -18,6 +18,8 @@
 		65EF8B5A2050372E002AF43E /* SeriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */; };
 		65EF8B5D2050540E002AF43E /* JSONReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B5C2050540E002AF43E /* JSONReader.swift */; };
 		65EF8B60205067AA002AF43E /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B5F205067AA002AF43E /* Extensions.swift */; };
+		65EF8B6220508041002AF43E /* DetailedSerieTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B6120508041002AF43E /* DetailedSerieTableViewController.swift */; };
+		65EF8B642051964D002AF43E /* DetailTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65EF8B632051964D002AF43E /* DetailTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesTableViewCell.swift; sourceTree = "<group>"; };
 		65EF8B5C2050540E002AF43E /* JSONReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONReader.swift; sourceTree = "<group>"; };
 		65EF8B5F205067AA002AF43E /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		65EF8B6120508041002AF43E /* DetailedSerieTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedSerieTableViewController.swift; sourceTree = "<group>"; };
+		65EF8B632051964D002AF43E /* DetailTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +161,8 @@
 			children = (
 				65EF8B57204F1C8A002AF43E /* SeriesTableViewController.swift */,
 				65EF8B592050372E002AF43E /* SeriesTableViewCell.swift */,
+				65EF8B6120508041002AF43E /* DetailedSerieTableViewController.swift */,
+				65EF8B632051964D002AF43E /* DetailTableViewCell.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -313,6 +319,8 @@
 			files = (
 				65EF8B58204F1C8A002AF43E /* SeriesTableViewController.swift in Sources */,
 				65EF8B60205067AA002AF43E /* Extensions.swift in Sources */,
+				65EF8B642051964D002AF43E /* DetailTableViewCell.swift in Sources */,
+				65EF8B6220508041002AF43E /* DetailedSerieTableViewController.swift in Sources */,
 				65EF8B5D2050540E002AF43E /* JSONReader.swift in Sources */,
 				65EF8B21204F121F002AF43E /* AppDelegate.swift in Sources */,
 				65EF8B5A2050372E002AF43E /* SeriesTableViewCell.swift in Sources */,

@@ -13,8 +13,7 @@ class JSONReader {
     static var shared = JSONReader()
     
     func downloadJSON(search: String, completed: @escaping ([Serie]) -> ()) {
-        let text = search.replacingOccurrences(of: " ", with: "+")
-        let jsonUrlString = "https://api.tvmaze.com/search/shows?q="+text
+        let jsonUrlString = "https://api.tvmaze.com/search/shows?q="+search
         
         guard let url = URL(string: jsonUrlString) else { return }
         URLSession.shared.dataTask(with: url) { (data, response, err) in
