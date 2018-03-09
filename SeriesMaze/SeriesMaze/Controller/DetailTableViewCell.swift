@@ -10,9 +10,30 @@ import UIKit
 
 class DetailTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var labelDetailOutlet: UILabel!
+    @IBOutlet weak var imageDetailOutlet: UIImageView!
+    /*
+    var detailedSerie: Serie? {
+        didSet {
+            var allGenres = ""
+            if let serie = detailedSerie {
+                for genre in serie.show.genres {
+                    if genre != serie.show.genres.last {
+                        allGenres += genre+", "
+                    } else {
+                        allGenres += genre
+                    }
+                }
+                self.labelDetailOutlet.textAlignment = .right
+                self.labelDetailOutlet.text = allGenres
+                self.imageDetailOutlet.image = #imageLiteral(resourceName: "labelImg")
+            }
+        }
+    }
+     */
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

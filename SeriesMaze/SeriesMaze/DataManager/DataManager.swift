@@ -8,11 +8,9 @@
 
 import Foundation
 
-class JSONReader {
+class DataManager {
     
-    static var shared = JSONReader()
-    
-    func downloadJSON(search: String, completed: @escaping ([Serie]) -> ()) {
+    class func downloadJSON(search: String, completed: @escaping ([Serie]) -> ()) {
         let jsonUrlString = "https://api.tvmaze.com/search/shows?q="+search
         
         guard let url = URL(string: jsonUrlString) else { return }

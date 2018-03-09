@@ -15,7 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        window?.tintColor = UIColor(red: 59/255, green: 59/255, blue: 59/255, alpha: 1)
+        UISearchBar.appearance().setTextBackgroundColor(color: UIColor(red: 233/255, green: 233/255, blue: 233/255, alpha: 1))
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor(red: 249/255, green: 204/255, blue: 2/255, alpha: 1)], for: .selected)
+        
+        self.window?.backgroundColor = .white
+        
         return true
     }
 

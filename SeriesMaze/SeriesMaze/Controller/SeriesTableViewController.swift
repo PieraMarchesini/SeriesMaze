@@ -11,14 +11,33 @@ import UIKit
 class SeriesTableViewController: UITableViewController {
     var series = [Serie]()
     var searchedSeries = [Serie]()
+    var searchText = ""
+    let refreshManager = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpNavBar()
+//        setRefreshController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        JSONReader.shared.downloadJSON(search: "rick") { (results) in
+        self.reload()
+    }
+    
+    func setRefreshController(){
+        self.tableView.refreshControl = refreshManager
+        refreshManager.addTarget(self, action: #selector(self.reload), for: .valueChanged)
+        // Use attributes to change whatever you want of text in refrash label
+//        let attributes = [NSAttributedStringKey.foregroundColor: Styles.darkGreen, NSAttributedStringKey.font : UIFont(name: Styles.champagneFont, size: 15)!]
+//        refreshManager.attributedTitle = NSAttributedString(string: "Atualizando Lista", attributes: attributes)
+    }
+    
+    // MARK: - Methods
+    @objc
+    func reload(){
+        var text = "rick"
+        if self.searchText != "" { text = self.searchText }
+        DataManager.downloadJSON(search: text) { (results) in
             self.series = results
             self.tableView.reloadData()
         }
@@ -29,10 +48,11 @@ class SeriesTableViewController: UITableViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
+//        searchController.searchBar.setTextBackgroundColor(color: UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1))
         searchController.searchBar.placeholder = "Search your favorites series"
         searchController.obscuresBackgroundDuringPresentation = false
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+        self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = false
         definesPresentationContext = true
     }
     
@@ -41,7 +61,8 @@ class SeriesTableViewController: UITableViewController {
         if search.last == "+" {
             search.remove(at: search.index(before: search.endIndex))
         }
-        JSONReader.shared.downloadJSON(search: search) { (results) in
+        self.searchText = search
+        DataManager.downloadJSON(search: search) { (results) in
             self.searchedSeries = results
             self.tableView.reloadData()
         }
@@ -81,7 +102,7 @@ class SeriesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "toDetailedSerie", sender: self)
+        self.performSegue(withIdentifier: "toDetailSerie", sender: self)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -91,8 +112,12 @@ class SeriesTableViewController: UITableViewController {
      // MARK: - Navigation
 
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? DetailedSerieTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
-            destination.detailedSerie = series[row]
+        if let destination = segue.destination as? DetailSerieTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
+            if isSearching() {
+                destination.detailedSerie = searchedSeries[row]
+            } else {
+                destination.detailedSerie = series[row]
+            }
         }
      }
 }

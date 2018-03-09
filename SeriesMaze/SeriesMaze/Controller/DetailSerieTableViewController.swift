@@ -8,65 +8,72 @@
 
 import UIKit
 
-class DetailedSerieTableViewController: UITableViewController {
+class DetailSerieTableViewController: UITableViewController {
     
     var detailedSerie: Serie?
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setToolbarHidden(true, animated: true)
-        self.navigationController?.navigationItem.largeTitleDisplayMode = .never
-        self.navigationController?.navigationBar.prefersLargeTitles = false
-    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let serie = detailedSerie {
-//            if let image = serie.show.image?.original {
-//                self.imageDetailedSerieOutlet.downloadedFrom(link: image)
-//            } else {
-//                self.imageDetailedSerieOutlet.image = UIImage()
-//            }
-//            self.imageDetailedSerieOutlet.contentMode = .scaleAspectFill
-//            self.nameDetailedSerieOutlet.text = serie.show.name
-//            self.genreDetailedSerieOutlet.text = serie.show.genres.first
-//            self.premieredDetailedSerieOutlet.text = serie.show.premiered
-//            self.summaryDetailedSerieOutlet.text = serie.show.summary
-        }
-        
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        self.title = "Selected Serie"
+        self.navigationItem.largeTitleDisplayMode = .never
+        self.tableView.tableFooterView = UIView()
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return 4
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+        guard let serie = detailedSerie else { return UITableViewCell() }
+        if indexPath.row == 0 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "mainDetailCell", for: indexPath) as? MainDetailTableViewCell else { return UITableViewCell() }
+            cell.serie = serie
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath) as? DetailTableViewCell else { return UITableViewCell() }
+            switch indexPath.row {
+            case 1:
+                var allGenres = ""
+                for genre in serie.show.genres {
+                    if genre != serie.show.genres.last {
+                        allGenres += genre+", "
+                    } else {
+                        allGenres += genre
+                    }
+                }
+                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "labelImg")
+                cell.labelDetailOutlet.text = allGenres
+            case 2:
+                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "dateImg")
+                cell.labelDetailOutlet.text = serie.show.premiered ?? "Premiered date is unknown"
+            case 3:
+                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "summaryImg")
+                cell.labelDetailOutlet.text = serie.show.summary ?? "Summary is unknown"
+            default:
+                break
+            }
+            cell.imageDetailOutlet.contentMode = .scaleAspectFit
+//            cell.detailedSerie = serie
+            return cell
+        }
     }
-    */
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.row {
+        case 0:
+            return 480
+        case 3:
+            return 100
+        default:
+            return 50
+        }
+    }
 
     /*
     // Override to support conditional editing of the table view.

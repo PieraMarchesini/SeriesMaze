@@ -28,3 +28,11 @@ extension UIImageView {
         downloadedFrom(url: url, contentMode: mode)
     }
 }
+
+public extension UISearchBar {
+    public func setTextBackgroundColor(color: UIColor) {
+        let svs = subviews.flatMap { $0.subviews }
+        guard let tf = (svs.filter { $0 is UITextField }).first as? UITextField else { return }
+        tf.backgroundColor = color
+    }
+}
