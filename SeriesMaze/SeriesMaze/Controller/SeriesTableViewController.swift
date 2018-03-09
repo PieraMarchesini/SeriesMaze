@@ -48,7 +48,7 @@ class SeriesTableViewController: UITableViewController {
         self.navigationController?.navigationBar.prefersLargeTitles = true
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
-//        searchController.searchBar.setTextBackgroundColor(color: UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1))
+        searchController.searchBar.delegate = self
         searchController.searchBar.placeholder = "Search your favorites series"
         searchController.obscuresBackgroundDuringPresentation = false
         self.navigationItem.searchController = searchController
@@ -93,11 +93,7 @@ class SeriesTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "serieCell", for: indexPath) as? SeriesTableViewCell else { return UITableViewCell() }
-        if isSearching() {
-            cell.serie = searchedSeries[indexPath.row]
-        } else {
-            cell.serie = series[indexPath.row]
-        }
+        cell.serie = isSearching() ? searchedSeries[indexPath.row] : series[indexPath.row]
         return cell
     }
     
@@ -113,19 +109,43 @@ class SeriesTableViewController: UITableViewController {
 
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DetailSerieTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
-            if isSearching() {
-                destination.detailedSerie = searchedSeries[row]
-            } else {
-                destination.detailedSerie = series[row]
-            }
+            destination.detailedSerie = isSearching() ? searchedSeries[row] : series[row]
         }
      }
 }
 
-extension SeriesTableViewController: UISearchResultsUpdating {
+extension SeriesTableViewController: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text, text != "" {
             searchInJSON(text: text)
         }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText = ""
+        reload()
+    }
+}
+
+extension SeriesTableViewController {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let favorite = favoriteAction(at: indexPath)
+        return UISwipeActionsConfiguration(actions: [favorite])
+    }
+    
+    func favoriteAction(at indexPath: IndexPath) -> UIContextualAction {
+        let serie = isSearching() ? searchedSeries[indexPath.row] : series[indexPath.row]
+        let action = UIContextualAction(style: .normal, title: "Favorite") { (action, view, completion) in
+            //TODO: - Salvar a série no CoreData como favorita e verificar se ela já está salva, aí não faz nada
+            completion(true)
+            //Caso dê merda, passa completion false
+        }
+        //TODO: - Verificar se é favorita
+        action.image = #imageLiteral(resourceName: "swipeFavoriteButton")
+        action.backgroundColor = Style.yellow
+//        action.title = "Unfavorite"
+//        action.image = #imageLiteral(resourceName: "favoriteEditButton")
+        
+        return action
     }
 }

@@ -23,14 +23,14 @@ extension UIImageView {
             }
             }.resume()
     }
-    func downloadedFrom(link: String, contentMode mode: UIViewContentMode = .scaleAspectFit) {
+    func downloadedFrom(link: String, contentMode mode: UIViewContentMode = .scaleAspectFill) {
         guard let url = URL(string: link) else { return }
         downloadedFrom(url: url, contentMode: mode)
     }
 }
 
-public extension UISearchBar {
-    public func setTextBackgroundColor(color: UIColor) {
+extension UISearchBar {
+    func setTextBackgroundColor(color: UIColor) {
         let svs = subviews.flatMap { $0.subviews }
         guard let tf = (svs.filter { $0 is UITextField }).first as? UITextField else { return }
         tf.backgroundColor = color

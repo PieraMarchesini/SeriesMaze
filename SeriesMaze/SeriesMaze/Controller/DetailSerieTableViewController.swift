@@ -10,13 +10,87 @@ import UIKit
 
 class DetailSerieTableViewController: UITableViewController {
     
+    // MARK: - Variables
+    @IBOutlet weak var favoriteButtonOutlet: UIBarButtonItem!
     var detailedSerie: Serie?
+    var headerView: DetailHeaderView!
+    var headerMaskLayer: CAShapeLayer!
+    
+    private let tableHeaderViewHeight: CGFloat = 460.0
+    private let tableHeaderViewCutaway: CGFloat = 40.0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Selected Serie"
+        //TODO: - Verificar se a série é favorita
+//        self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteButton")
+        
+        self.title = "Selected Series"
         self.navigationItem.largeTitleDisplayMode = .never
-        self.tableView.tableFooterView = UIView()
+        tableView.tableFooterView = UIView()
+        tableView.estimatedRowHeight = tableView.rowHeight
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        if let headerView = tableView.tableHeaderView as? DetailHeaderView {
+            self.headerView = headerView
+            if let image = self.detailedSerie?.show.image?.original {
+                headerView.imageView.downloadedFrom(link: image)
+            } else {
+                headerView.imageView.image = #imageLiteral(resourceName: "noImage")
+            }
+            tableView.tableHeaderView = nil
+            tableView.addSubview(headerView)
+            
+            tableView.contentInset = UIEdgeInsets(top: tableHeaderViewHeight, left: 0, bottom: 0, right: 0)
+            self.tableView.contentOffset = CGPoint(x: 0, y: -tableHeaderViewHeight + 64)
+            //Cut away header view
+            self.headerMaskLayer = CAShapeLayer()
+            self.headerMaskLayer.fillColor = UIColor.black.cgColor
+            self.headerView.layer.mask = self.headerMaskLayer
+            
+            let effectiveHeight = tableHeaderViewHeight - tableHeaderViewCutaway/2.5
+            tableView.contentInset = UIEdgeInsets(top: effectiveHeight, left: 0, bottom: 0, right: 0)
+            tableView.contentOffset = CGPoint(x: 0, y: -effectiveHeight)
+            
+            updateHeaderView()
+        }
+    }
+    
+    func updateHeaderView() {
+        let effectiveHeight = tableHeaderViewHeight - tableHeaderViewCutaway/2.5
+        var headerRect = CGRect(x: 0, y: -effectiveHeight, width: tableView.bounds.width, height: tableHeaderViewHeight)
+        if tableView.contentOffset.y < -effectiveHeight {
+            headerRect.origin.y = tableView.contentOffset.y
+            headerRect.size.height = -tableView.contentOffset.y + tableHeaderViewCutaway/2.5
+        }
+        self.headerView.frame = headerRect
+        
+        let path = UIBezierPath()
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: headerRect.width, y: 0))
+        path.addLine(to: CGPoint(x: headerRect.width, y: headerRect.height))
+        path.addLine(to: CGPoint(x: 0, y: headerRect.height-self.tableHeaderViewCutaway))
+        
+        self.headerMaskLayer?.path = path.cgPath
+    }
+    
+    @IBAction func favoriteButtonPressed(_ sender: Any) {
+        //TODO: - Verificar se é favorito ou não
+        let title = "Favorite"
+        let message = "Do you want to add this series to favorites?"
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.view.tintColor = Style.darkYellow
+        alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { action in
+            //TODO: - Adicionar aos favoritos
+            self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoritedEditButton")
+            }))
+        self.present(alert, animated: true, completion: nil)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+    }
+    
+    
+    // MARK: - ScrollView method
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateHeaderView()
     }
 
     // MARK: - Table view data source
@@ -39,85 +113,34 @@ class DetailSerieTableViewController: UITableViewController {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath) as? DetailTableViewCell else { return UITableViewCell() }
             switch indexPath.row {
             case 1:
-                var allGenres = ""
-                for genre in serie.show.genres {
-                    if genre != serie.show.genres.last {
-                        allGenres += genre+", "
-                    } else {
-                        allGenres += genre
-                    }
+                cell.titleDetailOutlet.text = "Genres"
+                let genres = Util.transform(list: serie.show.genres)
+                if genres == "" {
+                    cell.infoDetailOutlet.text = "There is no classified genre"
+                } else {
+                    cell.infoDetailOutlet.text = genres
                 }
-                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "labelImg")
-                cell.labelDetailOutlet.text = allGenres
             case 2:
-                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "dateImg")
-                cell.labelDetailOutlet.text = serie.show.premiered ?? "Premiered date is unknown"
+                cell.titleDetailOutlet.text = "Premiered"
+                cell.infoDetailOutlet.text = serie.show.premiered ?? "Premiered date is unknown"
             case 3:
-                cell.imageDetailOutlet.image = #imageLiteral(resourceName: "summaryImg")
-                cell.labelDetailOutlet.text = serie.show.summary ?? "Summary is unknown"
+                cell.titleDetailOutlet.text = "Summary"
+                cell.infoDetailOutlet.text = serie.show.summary ?? "Summary is unknown"
             default:
                 break
             }
-            cell.imageDetailOutlet.contentMode = .scaleAspectFit
-//            cell.detailedSerie = serie
             return cell
         }
     }
     
+    /*
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.row {
-        case 0:
-            return 480
         case 3:
             return 100
         default:
             return 50
         }
-    }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
+    }*/
 
 }

@@ -17,30 +17,18 @@ class SeriesTableViewCell: UITableViewCell {
     var serie: Serie? {
         didSet {
             guard let serie = serie else { return }
-            var genres = ""
             self.nameSerieOutlet.text = serie.show.name
-            for genre in serie.show.genres {
-                if genre != serie.show.genres.last {
-                    genres += genre+", "
-                } else {
-                    genres += genre
-                }
+            let genres = Util.transform(list: serie.show.genres)
+            if genres == "" {
+                genresSerieOutlet.text = "There is no classified genre"
+            } else {
+                genresSerieOutlet.text = genres
             }
-            self.genresSerieOutlet.text = genres
             if let image = serie.show.image?.medium {
                 self.imageSerieOutlet.downloadedFrom(link: image)
             } else {
-                self.imageSerieOutlet.image = UIImage()
+                self.imageSerieOutlet.image = #imageLiteral(resourceName: "noImageShort")
             }
         }
     }
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-    }
-
 }
