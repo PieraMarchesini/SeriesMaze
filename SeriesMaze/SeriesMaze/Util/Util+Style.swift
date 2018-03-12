@@ -20,6 +20,27 @@ class Util {
         }
         return word
     }
+    
+    class func transform(text: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-mm-dd"
+        return dateFormatter.date(from: text)
+    }
+    
+    class func transform(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM d, yyyy"
+        return dateFormatter.string(from: date)
+    }
+    
+    class func format(dateText: String) -> String? {
+        let date = transform(text: dateText)
+        if let date = date {
+            return transform(date: date)
+        } else {
+            return nil
+        }
+    }
 }
 
 struct Style {

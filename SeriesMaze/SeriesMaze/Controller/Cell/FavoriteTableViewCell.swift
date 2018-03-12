@@ -1,14 +1,14 @@
 //
-//  SeriesTableViewCell.swift
+//  FavoriteTableViewCell.swift
 //  SeriesMaze
 //
-//  Created by Piera Marchesini on 07/03/18.
+//  Created by Piera Marchesini on 12/03/18.
 //  Copyright © 2018 Piera Marchesini. All rights reserved.
 //
 
 import UIKit
 
-class SeriesTableViewCell: UITableViewCell {
+class FavoriteTableViewCell: UITableViewCell {
 
     @IBOutlet weak var nameSerieOutlet: UILabel!
     @IBOutlet weak var genresSerieOutlet: UILabel!
@@ -31,4 +31,5 @@ class SeriesTableViewCell: UITableViewCell {
             }
         }
     }
+
 }

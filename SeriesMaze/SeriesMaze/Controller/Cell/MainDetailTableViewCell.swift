@@ -11,7 +11,7 @@ import UIKit
 class MainDetailTableViewCell: UITableViewCell {
     @IBOutlet weak var nameDetailOutlet: UILabel!
     
-    var serie: Serie? {
+    var serie: Series? {
         didSet {
             guard let serie = serie else { return }
             self.nameDetailOutlet.text = serie.show.name

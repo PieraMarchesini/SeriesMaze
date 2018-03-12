@@ -9,9 +9,10 @@
 import UIKit
 
 class SeriesTableViewController: UITableViewController {
-    var series = [Serie]()
-    var searchedSeries = [Serie]()
+    var series = [Series]()
+    var searchedSeries = [Series]()
     var searchText = ""
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let refreshManager = UIRefreshControl()
     
     override func viewDidLoad() {
@@ -106,7 +107,6 @@ class SeriesTableViewController: UITableViewController {
     }
 
      // MARK: - Navigation
-
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let destination = segue.destination as? DetailSerieTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
             destination.detailedSerie = isSearching() ? searchedSeries[row] : series[row]
@@ -135,16 +135,22 @@ extension SeriesTableViewController {
     
     func favoriteAction(at indexPath: IndexPath) -> UIContextualAction {
         let serie = isSearching() ? searchedSeries[indexPath.row] : series[indexPath.row]
+        let isFavorite = DataManager.searchFavorite(id: serie.show.id)
         let action = UIContextualAction(style: .normal, title: "Favorite") { (action, view, completion) in
-            //TODO: - Salvar a série no CoreData como favorita e verificar se ela já está salva, aí não faz nada
+            if isFavorite {
+                DataManager.deleteFavorite(id: serie.show.id)
+            } else {
+                DataManager.addFavorite(series: serie)
+            }
             completion(true)
-            //Caso dê merda, passa completion false
         }
-        //TODO: - Verificar se é favorita
-        action.image = #imageLiteral(resourceName: "swipeFavoriteButton")
+        if isFavorite {
+            action.title = "Unfavorite"
+            action.image = #imageLiteral(resourceName: "swipeUnfavoriteButton")
+        } else {
+            action.image = #imageLiteral(resourceName: "swipeFavoriteButton")
+        }
         action.backgroundColor = Style.yellow
-//        action.title = "Unfavorite"
-//        action.image = #imageLiteral(resourceName: "favoriteEditButton")
         
         return action
     }

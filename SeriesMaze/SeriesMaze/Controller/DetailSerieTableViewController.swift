@@ -12,7 +12,8 @@ class DetailSerieTableViewController: UITableViewController {
     
     // MARK: - Variables
     @IBOutlet weak var favoriteButtonOutlet: UIBarButtonItem!
-    var detailedSerie: Serie?
+    var detailedSerie: Series?
+    var isFavorite = false
     var headerView: DetailHeaderView!
     var headerMaskLayer: CAShapeLayer!
     
@@ -21,8 +22,13 @@ class DetailSerieTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //TODO: - Verificar se a série é favorita
-//        self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteButton")
+        //Verificar se a série é favorita
+        if let serie = detailedSerie {
+            if DataManager.searchFavorite(id: serie.show.id){
+                self.isFavorite = true
+                self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteButton")
+            }
+        }
         
         self.title = "Selected Series"
         self.navigationItem.largeTitleDisplayMode = .never
@@ -74,14 +80,30 @@ class DetailSerieTableViewController: UITableViewController {
     }
     
     @IBAction func favoriteButtonPressed(_ sender: Any) {
-        //TODO: - Verificar se é favorito ou não
-        let title = "Favorite"
-        let message = "Do you want to add this series to favorites?"
+        var title = ""
+        var message = ""
+        if self.isFavorite {
+            title = "Unfavorite"
+            message = "Do you want to remove this series from favorites?"
+        } else {
+            title = "Favorite"
+            message = "Do you want to add this series to favorites?"
+        }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.view.tintColor = Style.darkYellow
         alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { action in
-            //TODO: - Adicionar aos favoritos
-            self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoritedEditButton")
+            //Adiciona/Remove dos favoritos
+            if let serie = self.detailedSerie {
+                if self.isFavorite {
+                    DataManager.deleteFavorite(id: serie.show.id)
+                    self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteEditButton")
+                    self.isFavorite = false
+                } else {
+                    DataManager.addFavorite(series: serie)
+                    self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoritedEditButton")
+                    self.isFavorite = true
+                }
+            }
             }))
         self.present(alert, animated: true, completion: nil)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -122,7 +144,12 @@ class DetailSerieTableViewController: UITableViewController {
                 }
             case 2:
                 cell.titleDetailOutlet.text = "Premiered"
-                cell.infoDetailOutlet.text = serie.show.premiered ?? "Premiered date is unknown"
+                if let premiered = serie.show.premiered {
+                    cell.infoDetailOutlet.text = Util.format(dateText: premiered) ?? "Premiered date is unknown"
+                } else {
+                    cell.infoDetailOutlet.text = "Premiered date is unknown"
+                }
+                
             case 3:
                 cell.titleDetailOutlet.text = "Summary"
                 cell.infoDetailOutlet.text = serie.show.summary ?? "Summary is unknown"

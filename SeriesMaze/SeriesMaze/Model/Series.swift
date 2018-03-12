@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Serie: Decodable {
+struct Series: Decodable {
     let score: Float
     let show: Show
     
