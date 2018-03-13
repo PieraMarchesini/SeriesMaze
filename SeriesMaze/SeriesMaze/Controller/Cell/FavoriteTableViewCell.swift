@@ -24,7 +24,7 @@ class FavoriteTableViewCell: UITableViewCell {
             } else {
                 genresSerieOutlet.text = genres
             }
-            if let image = serie.show.image?.medium {
+            if let image = serie.show.image?.medium, image != "" {
                 self.imageSerieOutlet.downloadedFrom(link: image)
             } else {
                 self.imageSerieOutlet.image = #imageLiteral(resourceName: "noImageShort")

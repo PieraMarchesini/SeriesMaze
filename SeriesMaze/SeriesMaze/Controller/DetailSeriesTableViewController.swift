@@ -1,18 +1,17 @@
 //
-//  DetailedSerieTableViewController.swift
+//  TesteTableViewController.swift
 //  SeriesMaze
 //
-//  Created by Piera Marchesini on 07/03/18.
+//  Created by Piera Marchesini on 13/03/18.
 //  Copyright © 2018 Piera Marchesini. All rights reserved.
 //
 
 import UIKit
 
-class DetailSerieTableViewController: UITableViewController {
-    
-    // MARK: - Variables
+class DetailSeriesTableViewController: UITableViewController {
+
     @IBOutlet weak var favoriteButtonOutlet: UIBarButtonItem!
-    var detailedSerie: Series?
+    var detailedSeries: Series?
     var isFavorite = false
     var headerView: DetailHeaderView!
     var headerMaskLayer: CAShapeLayer!
@@ -22,23 +21,21 @@ class DetailSerieTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Verificar se a série é favorita
-        if let serie = detailedSerie {
+        tableView.tableFooterView = UIView()
+
+        //Deal with the Navigation Bar
+        if let serie = detailedSeries {
             if DataManager.searchFavorite(id: serie.show.id){
                 self.isFavorite = true
                 self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteButton")
             }
         }
-        
-        self.title = "Selected Series"
         self.navigationItem.largeTitleDisplayMode = .never
-        tableView.tableFooterView = UIView()
-        tableView.estimatedRowHeight = tableView.rowHeight
-        tableView.rowHeight = UITableViewAutomaticDimension
         
+        //Set up the stretchy header effect
         if let headerView = tableView.tableHeaderView as? DetailHeaderView {
             self.headerView = headerView
-            if let image = self.detailedSerie?.show.image?.original {
+            if let image = self.detailedSeries?.show.image?.original {
                 headerView.imageView.downloadedFrom(link: image)
             } else {
                 headerView.imageView.image = #imageLiteral(resourceName: "noImage")
@@ -61,6 +58,7 @@ class DetailSerieTableViewController: UITableViewController {
         }
     }
     
+    // MARK: - Stretchy header effect
     func updateHeaderView() {
         let effectiveHeight = tableHeaderViewHeight - tableHeaderViewCutaway/2.5
         var headerRect = CGRect(x: 0, y: -effectiveHeight, width: tableView.bounds.width, height: tableHeaderViewHeight)
@@ -78,7 +76,75 @@ class DetailSerieTableViewController: UITableViewController {
         
         self.headerMaskLayer?.path = path.cgPath
     }
+
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+
+    // MARK: - Table view data source
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 4
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let series = self.detailedSeries else { return UITableViewCell() }
+        if indexPath.row == 0 {
+            guard let titleCell = tableView.dequeueReusableCell(withIdentifier: "testeTitleCell", for: indexPath) as? DetailTitleTableViewCell else { return UITableViewCell() }
+            titleCell.serie = series
+            return titleCell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "testeCell", for: indexPath) as? DetailSeriesTableViewCell else { return UITableViewCell() }
+            switch indexPath.row {
+            case 1:
+                cell.titleOutlet.text = "Genres"
+                let genres = Util.transform(list: series.show.genres)
+                if genres == "" {
+                    cell.detailOutlet.text = "There is no classified genre"
+                } else {
+                    cell.detailOutlet.text = genres
+                }
+            case 2:
+                cell.titleOutlet.text = "Premiered"
+                if let premiered = series.show.premiered {
+                    cell.detailOutlet.text = Util.format(dateText: premiered) ?? "Premiered date is unknown"
+                } else {
+                    cell.detailOutlet.text = "Premiered date is unknown"
+                }
+            case 3:
+                cell.titleOutlet.text = "Summary"
+                if let summary = series.show.summary {
+                    cell.detailOutlet.attributedText = summary.htmlAttributed(size: 11)
+                } else {
+                    cell.detailOutlet.text = "Summary is unknown"
+                }
+            default:
+                break
+            }
+            return cell
+        }
+    }
     
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch indexPath.row {
+        case 0: //Title
+            return 58
+        case 3: //Summary
+            return 330
+        default:
+            return 64
+        }
+    }
+ 
+    // MARK: - ScrollView method
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateHeaderView()
+    }
+    
+    // MARK: - Favorite Method
     @IBAction func favoriteButtonPressed(_ sender: Any) {
         var title = ""
         var message = ""
@@ -92,8 +158,8 @@ class DetailSerieTableViewController: UITableViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.view.tintColor = Style.darkYellow
         alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { action in
-            //Adiciona/Remove dos favoritos
-            if let serie = self.detailedSerie {
+            //Add/Remove from favorites
+            if let serie = self.detailedSeries {
                 if self.isFavorite {
                     DataManager.deleteFavorite(id: serie.show.id)
                     self.favoriteButtonOutlet.image = #imageLiteral(resourceName: "favoriteEditButton")
@@ -104,70 +170,8 @@ class DetailSerieTableViewController: UITableViewController {
                     self.isFavorite = true
                 }
             }
-            }))
+        }))
         self.present(alert, animated: true, completion: nil)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
     }
-    
-    
-    // MARK: - ScrollView method
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        updateHeaderView()
-    }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 4
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let serie = detailedSerie else { return UITableViewCell() }
-        if indexPath.row == 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "mainDetailCell", for: indexPath) as? MainDetailTableViewCell else { return UITableViewCell() }
-            cell.serie = serie
-            return cell
-        } else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "detailCell", for: indexPath) as? DetailTableViewCell else { return UITableViewCell() }
-            switch indexPath.row {
-            case 1:
-                cell.titleDetailOutlet.text = "Genres"
-                let genres = Util.transform(list: serie.show.genres)
-                if genres == "" {
-                    cell.infoDetailOutlet.text = "There is no classified genre"
-                } else {
-                    cell.infoDetailOutlet.text = genres
-                }
-            case 2:
-                cell.titleDetailOutlet.text = "Premiered"
-                if let premiered = serie.show.premiered {
-                    cell.infoDetailOutlet.text = Util.format(dateText: premiered) ?? "Premiered date is unknown"
-                } else {
-                    cell.infoDetailOutlet.text = "Premiered date is unknown"
-                }
-                
-            case 3:
-                cell.titleDetailOutlet.text = "Summary"
-                cell.infoDetailOutlet.text = serie.show.summary ?? "Summary is unknown"
-            default:
-                break
-            }
-            return cell
-        }
-    }
-    
-    /*
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.row {
-        case 3:
-            return 100
-        default:
-            return 50
-        }
-    }*/
-
 }

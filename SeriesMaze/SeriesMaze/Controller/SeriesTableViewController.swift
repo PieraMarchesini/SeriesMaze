@@ -12,25 +12,14 @@ class SeriesTableViewController: UITableViewController {
     var series = [Series]()
     var searchedSeries = [Series]()
     var searchText = ""
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    let refreshManager = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setUpNavBar()
-//        setRefreshController()
+        self.setUpNavBar()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.reload()
-    }
-    
-    func setRefreshController(){
-        self.tableView.refreshControl = refreshManager
-        refreshManager.addTarget(self, action: #selector(self.reload), for: .valueChanged)
-        // Use attributes to change whatever you want of text in refrash label
-//        let attributes = [NSAttributedStringKey.foregroundColor: Styles.darkGreen, NSAttributedStringKey.font : UIFont(name: Styles.champagneFont, size: 15)!]
-//        refreshManager.attributedTitle = NSAttributedString(string: "Atualizando Lista", attributes: attributes)
     }
     
     // MARK: - Methods
@@ -40,6 +29,14 @@ class SeriesTableViewController: UITableViewController {
         if self.searchText != "" { text = self.searchText }
         DataManager.downloadJSON(search: text) { (results) in
             self.series = results
+            self.tableView.reloadData()
+        }
+    }
+    
+    func searchInJSON(text: String) {
+        self.searchText = Util.formatSearch(text: text)
+        DataManager.downloadJSON(search: self.searchText) { (results) in
+            self.searchedSeries = results
             self.tableView.reloadData()
         }
     }
@@ -57,18 +54,6 @@ class SeriesTableViewController: UITableViewController {
         definesPresentationContext = true
     }
     
-    func searchInJSON(text: String) {
-        var search = text.replacingOccurrences(of: " ", with: "+")
-        if search.last == "+" {
-            search.remove(at: search.index(before: search.endIndex))
-        }
-        self.searchText = search
-        DataManager.downloadJSON(search: search) { (results) in
-            self.searchedSeries = results
-            self.tableView.reloadData()
-        }
-    }
-    
     func searchBarIsEmpty() -> Bool {
         guard let searchController = navigationItem.searchController else { return true }
         return searchController.searchBar.text?.isEmpty ?? true
@@ -80,7 +65,6 @@ class SeriesTableViewController: UITableViewController {
     }
     
     // MARK: - Table view data source
-    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -99,7 +83,7 @@ class SeriesTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.performSegue(withIdentifier: "toDetailSerie", sender: self)
+        self.performSegue(withIdentifier: "toDetailTableView", sender: self)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -108,12 +92,13 @@ class SeriesTableViewController: UITableViewController {
 
      // MARK: - Navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let destination = segue.destination as? DetailSerieTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
-            destination.detailedSerie = isSearching() ? searchedSeries[row] : series[row]
+        if let destination = segue.destination as? DetailSeriesTableViewController, let row = self.tableView.indexPathForSelectedRow?.row {
+            destination.detailedSeries = isSearching() ? searchedSeries[row] : series[row]
         }
      }
 }
 
+// MARK: - Search Delegate
 extension SeriesTableViewController: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
         if let text = searchController.searchBar.text, text != "" {
@@ -127,6 +112,7 @@ extension SeriesTableViewController: UISearchResultsUpdating, UISearchBarDelegat
     }
 }
 
+// MARK: - Swipe Actions
 extension SeriesTableViewController {
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let favorite = favoriteAction(at: indexPath)
@@ -151,7 +137,6 @@ extension SeriesTableViewController {
             action.image = #imageLiteral(resourceName: "swipeFavoriteButton")
         }
         action.backgroundColor = Style.yellow
-        
         return action
     }
 }

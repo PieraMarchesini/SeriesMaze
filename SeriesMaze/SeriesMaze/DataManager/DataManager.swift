@@ -36,16 +36,13 @@ class DataManager {
                 request.returnsObjectsAsFaults = false
         do {
             let result = try context.fetch(request)
-            for data in result as! [NSManagedObject] {
-                print(data.value(forKey: "name") as! String)
-            }
             if result.count == 0 {
                 return false
             } else {
                 return true
             }
         } catch {
-            print("Failed")
+            print("Failed to fetch specific favorite from CoreData")
             return false
         }
     }
@@ -53,16 +50,21 @@ class DataManager {
     class func searchFavorites() -> [Series] {
         var favSeries = [Serie]()
         var series = [Series]()
+        
         do {
-            favSeries = try context.fetch(Serie.fetchRequest())
+            let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Serie")
+            request.sortDescriptors = [NSSortDescriptor(key: "dateAdded", ascending: false)]
+            favSeries = try context.fetch(request) as! [Serie]
+            
+            for fav in favSeries {
+                let serie = Series(score: 0, show: Series.Show(id: Int(fav.id), name: fav.name ?? "", genres: [fav.genres ?? ""], premiered: fav.premiered, image: Series.Image(medium: fav.imageMedium ?? "", original: fav.imageOriginal ?? ""), summary: fav.summary))
+                series.append(serie)
+            }
+            return series
         } catch {
-            print("Fetching Failed")
+            print("Failed to fetch favorites from CoreData")
+            return [Series]()
         }
-        for fav in favSeries {
-            let serie = Series(score: 0, show: Series.Show(id: Int(fav.id), name: fav.name ?? "", genres: [fav.genres ?? ""], premiered: fav.premiered, image: Series.Image(medium: fav.imageMedium ?? "", original: fav.imageOriginal ?? ""), summary: fav.summary))
-            series.append(serie)
-        }
-        return series
     }
     
     class func addFavorite(series: Series) {
@@ -74,11 +76,12 @@ class DataManager {
         favSerie.summary = series.show.summary
         favSerie.imageMedium = series.show.image?.medium
         favSerie.imageOriginal = series.show.image?.original
+        favSerie.dateAdded = Date()
         
         do {
             try context.save()
         } catch {
-            print("Failed saving")
+            print("Failed saving favorite")
         }
     }
     
@@ -94,7 +97,7 @@ class DataManager {
                 try context.save()
             }
         } catch {
-            print("Failed")
+            print("Failed deleting favorites")
         }
     }
 }

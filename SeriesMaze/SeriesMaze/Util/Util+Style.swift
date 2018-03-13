@@ -21,6 +21,14 @@ class Util {
         return word
     }
     
+    class func formatSearch(text: String) -> String {
+        var search = text.replacingOccurrences(of: " ", with: "+")
+        if search.last == "+" {
+            search.remove(at: search.index(before: search.endIndex))
+        }
+        return search
+    }
+    
     class func transform(text: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-mm-dd"

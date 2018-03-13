@@ -36,3 +36,28 @@ extension UISearchBar {
         tf.backgroundColor = color
     }
 }
+
+extension String {
+    func htmlAttributed(size: CGFloat) -> NSAttributedString? {
+        do {
+            let htmlCSSString = "<style>" +
+                "html *" +
+                "{" +
+                "font-size: \(size)pt !important;" +
+                "font-family: \("Helvetica-Light"), Helvetica !important;" +
+            "}</style> \(self)"
+            
+            guard let data = htmlCSSString.data(using: String.Encoding.utf8) else {
+                return nil
+            }
+        
+            return try NSAttributedString(data: data,
+                                          options: [.documentType: NSAttributedString.DocumentType.html,
+                                                    .characterEncoding: String.Encoding.utf8.rawValue],
+                                          documentAttributes: nil)
+        } catch {
+            print("error: ", error)
+            return nil
+        }
+    }
+}
